@@ -2,7 +2,6 @@
 
 open System
 
-
 let printMap (heights : float[,]) =
     let upper = heights.GetLength(0) - 1
     for y in [0..upper] do
@@ -105,6 +104,14 @@ let getVertexAndPoint vertexCount point =
     let subPoint = x - float (int x), y - float (int y)
     vertex, subPoint
 
+
+// triangle (0, 0) (0, 1) (1 0)
+let heightInTriangle originHeight topHeight rightHeight point =
+    let x, y = point
+    originHeight
+    + x * (rightHeight - originHeight)
+    + y * (topHeight - originHeight)
+
 let getHeight (vHeights : float[,]) point =
     match point with
     | x, _ when x < 0.0 || x >= 1.0 -> 0.0
@@ -116,30 +123,35 @@ let getHeight (vHeights : float[,]) point =
     let tl = vHeights.[vx, vy + 1]
     let tr = vHeights.[vx + 1, vy + 1]
     let br = vHeights.[vx + 1, vy]
-    (bl * (1. - px) * (1. - py))
-    + (tl  * (1. - px) * py)
-    + (tr * px * py)
-    + (br * px * (1. - py))
+    
+    if x >= y then
+        heightInTriangle br bl tr (y, (1.0 - x))
+    else
+        heightInTriangle tl tr bl ((1.0 - y), x)
 
+//let getTerrain seed =
+    
 
-let random =
-    let seed = Random().Next()
+let random seed =
+    let seed =
+        match seed with
+        | None -> Random().Next()
+        | Some seed -> seed
     // let seed = 282857238
     // let seed = 389150060
     printfn "Seed: %d" seed
     Random(seed)
 
 let go () =
-//    let vHeights = createVerticiesMap random 10
-//    //printMap vHeights
-//    let maxValue, maxCoord = findMax vHeights
-//    printfn "Max: %f @ %A" maxValue maxCoord
-    let vh = array2D [|  [| 1.0; 0.0 |] ; [| 0.0; 1.0 |] |]
-    let gh x y = getHeight vh (x, y)
-    printfn "bl: %f" (gh 0.001 0.001)
-    printfn "tl: %f" (gh 0.001 0.999)
-    printfn "tr: %f" (gh 0.999 0.999)
-    printfn "br: %f" (gh 0.999 0.001)
-    let p = 0.1, 0.1
-    //let h = getHeight vh p
-    printfn "%A: %f" p (gh (fst p) (snd p))
+    let vHeights = createVerticiesMap (random  None) 10
+    //printMap vHeights
+    let maxValue, maxCoord = findMax vHeights
+    printfn "Max: %f @ %A" maxValue maxCoord
+//    let vh = array2D [|  [| 1.0; 0.0 |] ; [| 0.0; 1.0 |] |]
+//    let gh x y = getHeight vh (x, y)
+//    printfn "bl: %f" (gh 0.001 0.001)
+//    printfn "tl: %f" (gh 0.001 0.999)
+//    printfn "tr: %f" (gh 0.999 0.999)
+//    printfn "br: %f" (gh 0.999 0.001)
+//    let p = 0.3, 0.7
+//    printfn "%A: %f" p (gh (fst p) (snd p))
