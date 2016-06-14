@@ -1,14 +1,19 @@
 ﻿module Terrain
 
 open System
+open System.IO
+open System.Text
 
 let printMap (heights : float[,]) =
+    let sb = new StringBuilder()
     let upper = heights.GetLength(0) - 1
     for y in [0..upper] do
         for x in [0..upper] do
-            printf "%f " heights.[x, y]
-        printfn ""
-
+            sb.Append (sprintf "%f " heights.[x, y]) |> ignore
+        sb.AppendLine() |> ignore
+    File.WriteAllText(@"c:\stuff\desktop\out.txt", sb.ToString())
+    printfn "%s" (sb.ToString())
+    
 let findMax (heights : float[,])  =
     let mutable maxValue = -1.0
     let mutable maxCoord = (-1, -1)
@@ -29,20 +34,52 @@ let randMinusToPlusOne (random : Random) =
 let nudge random range initial =
     initial + (range * randMinusToPlusOne random)
 
-let newHeight (array : float[,]) nudge verticies =
+let newHeight (heights : float[,]) nudge verticies =
+    let max = heights.GetLength(0) - 1
     verticies
-    |> List.map (fun (x, y) -> array.[x, y])
+    |> List.filter (fun (x, y) -> x >= 0 && y >= 0 && x <= max && y <= max)
+    |> List.map (fun (x, y) -> heights.[x, y])
     |> List.average
     |> nudge
 
+
+type Orientation = Inline | Diagnal
+
+let setHeight (heights : float[,]) nudge halfCount orientation vertexToSet  =
+    let max = heights.GetLength(0) - 1
+    let x, y = vertexToSet 
+    let sourcePoints = 
+        match orientation with 
+        | Inline -> [(x - halfCount, y); (x, y + halfCount); (x + halfCount, y); (x, y - halfCount)]
+        | Diagnal -> [(x - halfCount, y - halfCount); (x - halfCount, y + halfCount); (x + halfCount, y + halfCount); (x + halfCount, y - halfCount)]
+    heights.[x, y] <-
+        sourcePoints
+        |> List.filter (fun (x, y) -> x >= 0 && y >= 0 && x <= max && y <= max)
+        |> List.map (fun (x, y) -> heights.[x, y])
+        |> List.average
+        |> nudge
+    
+let setCentre (heights : float[,]) nudge halfCount bottomLeft  =
+    match halfCount with 
+    | 0 -> ()
+    | _ -> 
+    let x, y = bottomLeft
+    let centre = x + halfCount, y + halfCount
+    setHeight heights nudge halfCount Diagnal centre
+    
+
 let rec fillSquare random (heights : float[,]) nudgeRange tileCount vertex  =
+    printMap heights
+    Console.ReadKey() |> ignore
+    printfn ""
+
     match tileCount with 
     | 0 -> failwith "This should never happen."
     | 1 -> ()
-    | tileCount -> 
+    | _ -> 
     let halfCount = tileCount / 2
     let halfRange = nudgeRange / 2.0
-    let bigNudge = nudge random nudgeRange
+    //let bigNudge = nudge random nudgeRange
     let nudge = nudge random halfRange
     let x, y = vertex
     
@@ -57,42 +94,40 @@ let rec fillSquare random (heights : float[,]) nudgeRange tileCount vertex  =
     let midRight = x + tileCount, y + halfCount
     let midBottom = x + halfCount, y
     
-    heights.[fst centre, snd centre] <-
-        newHeight heights bigNudge  [bottomLeft; topLeft; topRight; bottomRight]
+    //setHeight heights bigNudge halfCount Diagnal centre
+    setHeight heights nudge halfCount Inline midLeft
+    setHeight heights nudge halfCount Inline midTop
+    setHeight heights nudge halfCount Inline midRight
+    setHeight heights nudge halfCount Inline midBottom
 
-    heights.[fst midLeft, snd midLeft] <-
-        newHeight heights nudge  [centre; bottomLeft; topLeft; ]
-
-    heights.[fst midTop, snd midTop] <-
-        newHeight heights nudge  [centre; topLeft; topRight; ]
-
-    heights.[fst midRight, snd midRight] <-
-        newHeight heights nudge  [centre; topRight; bottomRight; ]
-
-    heights.[fst bottomRight, snd bottomRight] <-
-        newHeight heights nudge  [centre; bottomRight; bottomLeft; ]
+    setCentre heights nudge (halfCount/2) bottomLeft
+    setCentre heights nudge (halfCount/2) midLeft
+    setCentre heights nudge (halfCount/2) centre
+    setCentre heights nudge (halfCount/2) midBottom
 
     let fillSubsquare = fillSquare random heights halfRange halfCount
     fillSubsquare bottomLeft
     fillSubsquare midLeft
     fillSubsquare centre
     fillSubsquare midBottom
+    ()
     
-    
-let createVerticiesMap random exp =
+let createVertexMap random exp =
     let tileCount = pown 2 exp
     let vericiesCount = tileCount + 1
     let heights = Array2D.zeroCreate vericiesCount vericiesCount
 
     let initialCornerHeight = 0.5
     let nudgeRange = 0.25
+    let nudge = nudge random nudgeRange
     let newCornerHeight () = 
-        nudge random nudgeRange initialCornerHeight
+        nudge initialCornerHeight
 
     for x in [0; tileCount] do
         for y in [0; tileCount] do
             heights.[x, y] <- newCornerHeight ()
 
+    setCentre heights nudge (tileCount/2) (0,0)
     fillSquare random heights nudgeRange tileCount (0, 0)
     heights
 
@@ -127,31 +162,40 @@ let getHeight (vHeights : float[,]) point =
     if x >= y then
         heightInTriangle br bl tr (y, (1.0 - x))
     else
-        heightInTriangle tl tr bl ((1.0 - y), x)
-
-//let getTerrain seed =
-    
+        heightInTriangle tl tr bl ((1.0 - y), x)    
 
 let random seed =
     let seed =
         match seed with
         | None -> Random().Next()
         | Some seed -> seed
-    // let seed = 282857238
-    // let seed = 389150060
+
     printfn "Seed: %d" seed
     Random(seed)
 
-let go () =
-    let vHeights = createVerticiesMap (random  None) 10
-    //printMap vHeights
+let getTerrain exp seed : (float -> float -> float) =
+    let random = random seed
+    let vHeights = createVertexMap random exp
+    printMap vHeights
     let maxValue, maxCoord = findMax vHeights
     printfn "Max: %f @ %A" maxValue maxCoord
-//    let vh = array2D [|  [| 1.0; 0.0 |] ; [| 0.0; 1.0 |] |]
-//    let gh x y = getHeight vh (x, y)
-//    printfn "bl: %f" (gh 0.001 0.001)
-//    printfn "tl: %f" (gh 0.001 0.999)
-//    printfn "tr: %f" (gh 0.999 0.999)
-//    printfn "br: %f" (gh 0.999 0.001)
-//    let p = 0.3, 0.7
-//    printfn "%A: %f" p (gh (fst p) (snd p))
+    fun x y -> getHeight vHeights (x, y)
+
+
+let go () =
+    let seed = Some 282857238
+    let seed = Some 389150060
+    let seed = Some 643083317
+     //let seed = None
+    //let terrain = getTerrain 2 seed
+    let terrain = getTerrain 3 seed
+//
+//    let count = 50
+//    [0..(count-1)]
+//    |> List.map float
+//    |> List.map (fun x -> x/(float count))
+//    |> List.iter(fun x ->
+//        printfn "%f" (terrain x 0.333))
+
+    terrain
+
