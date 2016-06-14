@@ -49,7 +49,8 @@
   <ItemGroup>
     <None Include="App.config" />
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Terrain.fs" />
+    <Compile Include="Surface.fs" />
+    <Compile Include="Landscape.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <PropertyGroup>

@@ -2,6 +2,7 @@
 
 [<EntryPoint>]
 let main argv = 
-    Terrain.go () |> ignore
+    let elevationMap = Landscape.getElevationMap () 
+    //printfn "%f" (elevationMap (1000.0, 1000.0))
     Console.ReadKey() |> ignore
     0
