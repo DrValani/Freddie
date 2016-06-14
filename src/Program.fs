@@ -2,6 +2,6 @@
 
 [<EntryPoint>]
 let main argv = 
-    Terrain.go ()
+    Terrain.go () |> ignore
     Console.ReadKey() |> ignore
     0
