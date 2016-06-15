@@ -50,5 +50,5 @@ let getElevationMap () =
     landscape
         |> pointsAsString 254
         |> writeFile "points.txt"
-    landscape.GetElevation
-    //fun x y -> landscape.GetElevation (x, y)
+    //landscape.GetElevation
+    fun x y -> landscape.GetElevation (x, y)

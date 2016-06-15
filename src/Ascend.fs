@@ -2,49 +2,61 @@
 
 open System
 
-open Landscape
-let elevationMap = getElevationMap ()
+type Point =
+  { X : float 
+    Y : float}
 
-let pickStart () =
-    let random = Random()
-    let pickRandom () = random.NextDouble() * Landscape.length 
-    (pickRandom (), pickRandom())
+type State =
+  { Point : Point
+    Step : float }
+
+let pickStart startPoint initialStep =
+    let x, y = startPoint 
+    let point = { X = x; Y = y }
+    { Point = point
+      Step = initialStep }
     
-let findHigherPoint point step =
-    let x, y = point
+let findHigherPoint state getElevation =
+    let { Point = point; Step = step } = state
+
     let candidates = 
-      [ (x - step, y); (x, y + step); (x + step, y); (x, y - step); ]
+      [ {point with Y = point.Y - step}
+        {point with X = point.X + step}
+        {point with Y = point.Y + step}
+        {point with X = point.X - step} ]
 
-    let best = 
-        candidates
-        |> List.map (fun point -> (point, elevationMap point))
-        |> List.maxBy (fun (point, elevation) -> elevation)
+    let bestPoint = 
+        List.maxBy getElevation candidates
     
-    let bestPoint, bestElevation = best
-    match bestElevation > (elevationMap point) with
-    | true -> Some bestPoint
+    let bestElevation = getElevation bestPoint
+
+    match bestElevation > (getElevation point) with
+    | true -> Some {state with Point = bestPoint}
     | false -> None
 
-let missionCompleted targetHeight point =
-    elevationMap point > targetHeight
+let missionComplete minStep state =
+    state.Step < minStep
 
-let ascendToElevation targetElevation =
-    let step = 500.0
-    let completed = missionCompleted targetElevation
-    let describe point =
-        let x, y = point
-        sprintf "x:%f, y:%f, elevation:%f" x y (elevationMap point)
+let climbToPeak startPoint startStep getElevation  =
+    let minStep = startStep / 10000.0 
+    let getElevation (point : Point) =
+        getElevation point.X point.Y
+    let stepFactor = 0.5
+    let describe state =
+        let {Point = point; Step = step } = state
+        let {X = x; Y = y} = point
+        sprintf "x:%f, y:%f, elevation:%f" x y (getElevation point)
 
-    let rec climbUntilDone point =
-        printfn "   -->  %s" (describe point)
-        match completed point with
-        | true -> printfn "Success :-)  Found %s." (describe point)
+    let rec climbUntilDone state =
+        printfn "   -->  %s" (describe state)
+        match missionComplete minStep state with
+        | true -> state.Point
         | false -> 
-            match findHigherPoint point step with
-            | None -> printfn "Failed :-(  Stalled at %s." (describe point)
+            match findHigherPoint state getElevation with
+            | None -> climbUntilDone { state with Step = (state.Step * stepFactor) }
             | Some better -> climbUntilDone better
 
-    climbUntilDone (pickStart ())
+    climbUntilDone (pickStart startPoint startStep)
 
 
     
