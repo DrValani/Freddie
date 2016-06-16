@@ -49,25 +49,15 @@ let missionComplete minStep state =
 
 let climbToPeak startPoint startStep getElevation  =
     let minStep = startStep / 10000.0 
-    let getElevation (point : Point) =
-        getElevation point.X point.Y
-    let stepFactor = 0.66
-    let describe state =
-        let {Point = point; Step = step } = state
-        let {X = x; Y = y} = point
-        sprintf "x:%f, y:%f, elevation:%f" x y (getElevation point)
+    let getElevation {X = x; Y = y} =
+        getElevation x y
 
     let rec climbUntilDone state = seq {
-        printfn "   -->  %s" (describe state)
-        if missionComplete minStep state then
-            yield state
-        else
-            yield! climbUntilDone (findHigherPoint state getElevation)
+        yield state
+        if not (missionComplete minStep state) then
+            let improved = findHigherPoint state getElevation
+            yield! climbUntilDone improved
     }
 
     let initialState = pickStart startPoint startStep getElevation
     climbUntilDone initialState
-
-
-    
-
