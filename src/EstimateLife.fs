@@ -28,6 +28,9 @@ let remainingTime readings currentTime =
 
     let line = findBestLine Fuel.Readings
     let totalTime = line.InitialFuel /  - line.Slope           
+=======
+    let totalTime = line.InitialFuel /  (- line.Slope)
+>>>>>>> jd-linear-regression
     totalTime - currentTime
 
             
