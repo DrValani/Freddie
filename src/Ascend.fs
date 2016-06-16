@@ -17,6 +17,7 @@ let pickStart startPoint initialStep =
       Step = initialStep }
     
 let findHigherPoint state getElevation =
+    let stepFactor = 0.66
     let { Point = point; Step = step } = state
 
     let candidates = 
@@ -31,8 +32,8 @@ let findHigherPoint state getElevation =
     let bestElevation = getElevation bestPoint
 
     match bestElevation > (getElevation point) with
-    | true -> Some {state with Point = bestPoint}
-    | false -> None
+    | true -> {state with Point = bestPoint}
+    | false -> {state with Step = state.Step * stepFactor}
 
 let missionComplete minStep state =
     state.Step < minStep
@@ -51,10 +52,7 @@ let climbToPeak startPoint startStep getElevation  =
         printfn "   -->  %s" (describe state)
         match missionComplete minStep state with
         | true -> state.Point
-        | false -> 
-            match findHigherPoint state getElevation with
-            | None -> climbUntilDone { state with Step = (state.Step * stepFactor) }
-            | Some better -> climbUntilDone better
+        | false -> climbUntilDone (findHigherPoint state getElevation)
 
     climbUntilDone (pickStart startPoint startStep)
 
