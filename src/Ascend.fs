@@ -18,24 +18,31 @@ let pickStart startPoint initialStep  getElevation =
       Step = initialStep 
       Elevation = getElevation point }
     
-let findHigherPoint state getElevation =
+let findHigherPoint current getElevation =
     let stepFactor = 0.66
-    let { Point = point; Step = step } = state
 
-    let candidates = 
-      [ {point with Y = point.Y - step}
-        {point with X = point.X + step}
-        {point with Y = point.Y + step}
-        {point with X = point.X - step} ]
+    let neighbours = 
+        let point = current.Point
+        let step = current.Step
+        [ {point with Y = point.Y - step}
+          {point with X = point.X + step}
+          {point with Y = point.Y + step}
+          {point with X = point.X - step} ]
 
-    let bestPoint = 
-        List.maxBy getElevation candidates
-    
-    let bestElevation = getElevation bestPoint
+    let newState point =
+        { current with
+            Point = point 
+            Elevation = getElevation point }
 
-    match bestElevation > (getElevation point) with
-    | true -> {state with Point = bestPoint}
-    | false -> {state with Step = state.Step * stepFactor}
+    let bestCandidate = 
+        neighbours
+        |> List.map newState
+        |> List.maxBy (fun s -> s.Elevation)
+
+    if bestCandidate.Elevation > current.Elevation then
+      bestCandidate
+    else
+      { current with Step = current.Step * stepFactor }
 
 let missionComplete minStep state =
     state.Step < minStep
