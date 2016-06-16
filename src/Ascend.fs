@@ -8,13 +8,15 @@ type Point =
 
 type State =
   { Point : Point
-    Step : float }
+    Step : float 
+    Elevation: float }
 
-let pickStart startPoint initialStep =
+let pickStart startPoint initialStep  getElevation =
     let x, y = startPoint 
     let point = { X = x; Y = y }
     { Point = point
-      Step = initialStep }
+      Step = initialStep 
+      Elevation = getElevation point }
     
 let findHigherPoint state getElevation =
     let stepFactor = 0.66
@@ -54,7 +56,8 @@ let climbToPeak startPoint startStep getElevation  =
         | true -> state.Point
         | false -> climbUntilDone (findHigherPoint state getElevation)
 
-    climbUntilDone (pickStart startPoint startStep)
+    let initialState = pickStart startPoint startStep getElevation
+    climbUntilDone initialState
 
 
     
