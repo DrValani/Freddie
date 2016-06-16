@@ -9,7 +9,7 @@ type Point =
 type State =
   { Point : Point
     Step : float 
-    Elevation: float }
+    Height: float }
   
 let findHigherPoint current getElevation =
     let stepFactor = 0.8333
@@ -25,14 +25,14 @@ let findHigherPoint current getElevation =
     let newState point =
         { current with
             Point = point 
-            Elevation = getElevation point }
+            Height = getElevation point }
 
     let bestCandidate = 
         neighbours
         |> List.map newState
-        |> List.maxBy (fun s -> s.Elevation)
+        |> List.maxBy (fun s -> s.Height)
 
-    if bestCandidate.Elevation > current.Elevation then
+    if bestCandidate.Height > current.Height then
       bestCandidate
     else
       { current with Step = current.Step * stepFactor }
@@ -44,7 +44,7 @@ let climb startPoint initialStep getHeight  =
     let initialState = 
        { Point = startPoint
          Step = initialStep 
-         Elevation = getHeight startPoint }
+         Height = getHeight startPoint }
     
     let minimumStep = initialStep / 10000.0
 
