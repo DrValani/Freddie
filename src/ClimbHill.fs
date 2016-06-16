@@ -1,4 +1,4 @@
-﻿module ClimbHill
+﻿module ProgNet.ClimbHill
 
 open System
 

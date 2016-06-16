@@ -1,4 +1,4 @@
-﻿module Surface
+﻿module ProgNet.Surface
 
 open System
 open System.Text

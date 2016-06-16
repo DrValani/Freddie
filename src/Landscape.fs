@@ -1,4 +1,4 @@
-﻿module Landscape
+﻿module ProgNet.Landscape
 
 open Surface
 
