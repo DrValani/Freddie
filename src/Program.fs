@@ -1,16 +1,13 @@
 ﻿open System
 
 open ClimbHill
-
-let euler x y = Math.E ** -(x ** 2.0 + y ** 2.0)
-
-let printState state =
-    let {Point = {X = x; Y = y}} = state
-    printfn "  --->  x:%f, y:%f, step:%f, elevation:%f" 
-        x y state.Step state.Elevation 
-
-[<EntryPoint>]
-let main argv = 
+open EstimateLife
+ 
+let climbHill () = 
+    let printState state =
+        let {Point = {X = x; Y = y}} = state
+        printfn "  ---> %sm (%f, %f) step:%f"
+           (state.Height.ToString("n0")) x y state.Step 
 
     let length = Landscape.length
     let elevationMap = Landscape.getElevationMap ()
@@ -22,6 +19,25 @@ let main argv =
 
     climb startPoint length getHeight
     |> Seq.iter printState
+
+let getRemainingTime currentTime =
+    printfn ""
+    printfn ""
+    printfn "Linear Regression"
+    printfn "================="
+    printfn ""
+    let start = DateTime(2016, 6, 16, 19, 0, 0)
+    //let start = DateTime(2016, 6, 23, 9, 0, 0)
+    let elapsedMinutes = DateTime.Now.Subtract(start).TotalMinutes
+    let remainingMinutes = EstimateLife.remainingTime Fuel.Readings elapsedMinutes
+    printfn "%s minutes remaining." (remainingMinutes.ToString("n1"))
+
+[<EntryPoint>]
+let main argv = 
+    climbHill ()
+
+    getRemainingTime 60.0
+    
 
     Console.ReadKey() |> ignore
     0
