@@ -14,6 +14,7 @@ let main argv =
             (random.NextDouble() * length, random.NextDouble() * length)
             5000.0
             getElevation
+        |> Seq.last
 
 //    let little = Surface.getSurface 1 random
 //    printfn "middle: %f" (little.GetElevation (0.5, 0.5))

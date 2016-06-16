@@ -50,11 +50,13 @@ let climbToPeak startPoint startStep getElevation  =
         let {X = x; Y = y} = point
         sprintf "x:%f, y:%f, elevation:%f" x y (getElevation point)
 
-    let rec climbUntilDone state =
+    let rec climbUntilDone state = seq {
         printfn "   -->  %s" (describe state)
-        match missionComplete minStep state with
-        | true -> state.Point
-        | false -> climbUntilDone (findHigherPoint state getElevation)
+        if missionComplete minStep state then
+            yield state
+        else
+            yield! climbUntilDone (findHigherPoint state getElevation)
+    }
 
     let initialState = pickStart startPoint startStep getElevation
     climbUntilDone initialState
