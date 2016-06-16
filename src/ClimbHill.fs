@@ -10,14 +10,7 @@ type State =
   { Point : Point
     Step : float 
     Elevation: float }
-
-let pickStart startPoint initialStep getElevation =
-    let x, y = startPoint 
-    let point = { X = x; Y = y }
-    { Point = point
-      Step = initialStep 
-      Elevation = getElevation point }
-    
+  
 let findHigherPoint current getElevation =
     let stepFactor = 0.8333
 
@@ -47,17 +40,18 @@ let findHigherPoint current getElevation =
 let missionComplete minStep state =
     state.Step < minStep
 
-let climb startPoint startStep getElevation  =
-    let minStep = startStep / 10000.0 
-    let getElevation {X = x; Y = y} =
-        getElevation x y
+let climb startPoint initialStep getHeight  =
+    let initialState = 
+       { Point = startPoint
+         Step = initialStep 
+         Elevation = getHeight startPoint }
+    
+    let minimumStep = initialStep / 10000.0
 
     let rec climbUntilDone state = seq {
         yield state
-        if not (missionComplete minStep state) then
-            let improved = findHigherPoint state getElevation
-            yield! climbUntilDone improved
-    }
+        if not (missionComplete minimumStep state) then
+            let improved = findHigherPoint state getHeight
+            yield! climbUntilDone improved }
 
-    let initialState = pickStart startPoint startStep getElevation
     climbUntilDone initialState

@@ -11,12 +11,16 @@ let printState state =
 
 [<EntryPoint>]
 let main argv = 
-    let random = new Random()
-    let hill = Landscape.getElevationMap ()
+
     let length = Landscape.length
+    let elevationMap = Landscape.getElevationMap ()
+    let getHeight point = elevationMap point.X point.Y             
     
-    let startPoint = (random.NextDouble() * length, random.NextDouble() * length)
-    climb startPoint length hill
+    let startPoint = 
+        { X = 0.5 * length 
+          Y = 0.5 * length }
+
+    climb startPoint length getHeight
     |> Seq.iter printState
 
     Console.ReadKey() |> ignore
