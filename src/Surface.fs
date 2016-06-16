@@ -46,7 +46,7 @@ let createVertexMap random exp =
     let heights = Array2D.zeroCreate vericiesCount vericiesCount
 
     let initialCornerHeight = 0.5
-    let nudgeRange = 0.25
+    let nudgeRange = 0.5
     let newCornerHeight () = 
         initialCornerHeight //|> nudge random nudgeRange
     
@@ -78,11 +78,12 @@ let createVertexMap random exp =
         match halfCount with
         | 0 -> ()
         | _ ->
-            let nudge = nudge random nudgeRange
+            let bigNudge = nudge random nudgeRange
+            let littleNudge = nudge random (nudgeRange / 2.0)
             enumerateCentres halfCount
-            |> Seq.iter (setHeight heights nudge halfCount Diagonal)  
+            |> Seq.iter (setHeight heights bigNudge halfCount Diagonal)  
             enumerateMidPoints halfCount
-            |> Seq.iter (setHeight heights nudge halfCount Inline)        
+            |> Seq.iter (setHeight heights littleNudge halfCount Inline)        
             fillSquares (nudgeRange / 2.0) (halfCount / 2)
 
     fillSquares (nudgeRange / 2.0) (tileCount / 2)
@@ -123,7 +124,7 @@ let getHeight (vHeights : float[,]) point =
     
     // Get height within the bottom right or the
     // top left triangle of the selected square.
-    if x >= y then
+    if px >= py then
         heightInTriangle br bl tr (py, (1.0 - px))
     else
         heightInTriangle tl tr bl ((1.0 - py), px)    
@@ -148,8 +149,31 @@ let getStats (heights : float[,])  =
     let point (x, y) = float x / float upper, float y / float upper
     maxValue, maxVertex, (point maxVertex), minValue, minVertex, (point minVertex)
 
+let verticiesAsString (heights : float[,]) =
+    let sb = new StringBuilder()
+    let upper = heights.GetLength(0) - 1
+    for y in [0..upper] do
+        for x in [0..upper] do
+            sb.Append (sprintf "%f " heights.[x, y]) |> ignore
+        sb.AppendLine() |> ignore
+    sb.ToString()    
+
+
+let pointsAsString samples surface =
+    let sb = new StringBuilder()
+    let upper = samples
+    let divisor = ((float upper) + 0.1)
+    for y in [0..upper] do
+        for x in [0..upper] do
+            let X = surface.Length * (float x) / divisor
+            let Y = surface.Length * (float y) / divisor
+            sb.Append (sprintf "%f " (surface.GetElevation (X, Y))) |> ignore
+        sb.AppendLine() |> ignore
+    sb.ToString()
+
 let getSurface exp random =
     let vertexHeights = createVertexMap random exp
+    //printfn "%s" (verticiesAsString vertexHeights)
     let maxValue, _, maxPoint, minValue, _, minPoint = getStats vertexHeights
     {
         GetElevation = getHeight vertexHeights
@@ -175,25 +199,3 @@ let scale length minElevation maxElevation surface =
         MinElevation = minElevation 
         MinLocation = scaleLocation surface.MinLocation }
     
-
-let verticiesAsString (heights : float[,]) =
-    let sb = new StringBuilder()
-    let upper = heights.GetLength(0) - 1
-    for y in [0..upper] do
-        for x in [0..upper] do
-            sb.Append (sprintf "%f " heights.[x, y]) |> ignore
-        sb.AppendLine() |> ignore
-    sb.ToString()    
-
-
-let pointsAsString samples surface =
-    let sb = new StringBuilder()
-    let upper = samples
-    let divisor = ((float upper) + 0.1)
-    for y in [0..upper] do
-        for x in [0..upper] do
-            let X = surface.Length * (float x) / divisor
-            let Y = surface.Length * (float y) / divisor
-            sb.Append (sprintf "%f " (surface.GetElevation (X, Y))) |> ignore
-        sb.AppendLine() |> ignore
-    sb.ToString()

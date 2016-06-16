@@ -41,7 +41,7 @@ let climbToPeak startPoint startStep getElevation  =
     let minStep = startStep / 10000.0 
     let getElevation (point : Point) =
         getElevation point.X point.Y
-    let stepFactor = 0.5
+    let stepFactor = 0.66
     let describe state =
         let {Point = point; Step = step } = state
         let {X = x; Y = y} = point
