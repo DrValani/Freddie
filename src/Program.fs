@@ -4,6 +4,7 @@ open System
 
 open ProgNet.ClimbHill
 
+// Can you describe this John?
 let euler x y = Math.E ** -(x ** 2.0 + y ** 2.0)
 
 let printState state =
