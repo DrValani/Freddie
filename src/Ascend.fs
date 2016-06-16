@@ -19,7 +19,7 @@ let pickStart startPoint initialStep  getElevation =
       Elevation = getElevation point }
     
 let findHigherPoint current getElevation =
-    let stepFactor = 0.66
+    let stepFactor = 0.8333
 
     let neighbours = 
         let point = current.Point

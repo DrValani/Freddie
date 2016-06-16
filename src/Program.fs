@@ -12,7 +12,6 @@ let printState state =
 [<EntryPoint>]
 let main argv = 
     let random = new Random()
-    Landscape.getElevationMap () |> ignore
     let getElevation = Landscape.getElevationMap ()
     let length = Landscape.length
     
