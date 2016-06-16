@@ -1,6 +1,6 @@
 ﻿open System
 
-open Ascend
+open ClimbHill
 
 let euler x y = Math.E ** -(x ** 2.0 + y ** 2.0)
 
@@ -12,11 +12,11 @@ let printState state =
 [<EntryPoint>]
 let main argv = 
     let random = new Random()
-    let getElevation = Landscape.getElevationMap ()
+    let hill = Landscape.getElevationMap ()
     let length = Landscape.length
     
     let startPoint = (random.NextDouble() * length, random.NextDouble() * length)
-    Ascend.climbToPeak startPoint length getElevation
+    climb startPoint length hill
     |> Seq.iter printState
 
     Console.ReadKey() |> ignore

@@ -1,4 +1,4 @@
-﻿module Ascend
+﻿module ClimbHill
 
 open System
 
@@ -11,7 +11,7 @@ type State =
     Step : float 
     Elevation: float }
 
-let pickStart startPoint initialStep  getElevation =
+let pickStart startPoint initialStep getElevation =
     let x, y = startPoint 
     let point = { X = x; Y = y }
     { Point = point
@@ -47,7 +47,7 @@ let findHigherPoint current getElevation =
 let missionComplete minStep state =
     state.Step < minStep
 
-let climbToPeak startPoint startStep getElevation  =
+let climb startPoint startStep getElevation  =
     let minStep = startStep / 10000.0 
     let getElevation {X = x; Y = y} =
         getElevation x y
