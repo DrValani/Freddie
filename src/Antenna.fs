@@ -22,29 +22,29 @@ let createDesign () =
     let parts = generateList randomPart partCount
     { Parts = parts; Reception = reception parts }
 
-let createDesigns = generateList createDesign 
-
-        
+let createDesigns = 
+    generateList createDesign 
+       
 let missionComplete designs =
-    let targetReception = 80.0
+    let targetReception = 90.0
     match designs with
     | first::_ -> first.Reception > targetReception
     | _ -> failwith "Well, this shouldn't happen"
-
-let shuffle list =
-    let array = Array.ofList list
-    let len = Array.length array
-    for i in [0 .. (len - 1)] do
-        let j = random.Next(len)
-        let jItem = array.[j]
-        array.[j] <- array.[i]
-        array.[i] <- jItem    
-    List.ofArray array
 
    
 let evolve designs =
     let designCount = List.length designs
 
+    let shuffle list =
+        let array = Array.ofList list
+        let len = Array.length array
+        for i in [0 .. (len - 1)] do
+            let j = random.Next(len)
+            let jItem = array.[j]
+            array.[j] <- array.[i]
+            array.[i] <- jItem    
+        List.ofArray array
+   
     let selectPairs designs =
         List.zip designs (shuffle designs)
 
@@ -63,11 +63,10 @@ let evolve designs =
         |> List.map crossover
 
     let cull designs =
-        let cullRate = 0.1
         designs
         |> Seq.mapi (fun i design -> (i, design))
         |> Seq.filter (fun (i, design) -> 
-           i > random.Next(designCount) && random.NextDouble() < (cullRate * 2.0)) 
+           i < random.Next(designCount) && random.NextDouble() > 0.2) 
         |> Seq.map snd
         |> List.ofSeq
 
@@ -79,4 +78,14 @@ let evolve designs =
     |> Seq.sortBy (fun design -> -1.0 * design.Reception)
     |> List.ofSeq
 
+let design () = 
+    let initialDesigns = createDesigns 1000
+    
+    let rec evolveUntilDone designs = seq {
+        yield designs
+        if not (missionComplete designs) then
+            let evolved = evolve designs
+            yield! evolveUntilDone evolved }
 
+    createDesigns 1000 |> evolveUntilDone 
+    
