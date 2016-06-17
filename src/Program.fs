@@ -38,11 +38,11 @@ let main argv =
     //climbHill ()
     //getRemainingTime 60.0
     
-    let designs = Antenna.createDesigns 100000
-//    for ant in designs do
-//         printfn "reception: %f" ant.Reception 
-//
-    printf "max: %f" (designs |> List.map (fun a -> a.Reception) |> List.max)
+    let designs = Antenna.createDesigns 10
+    for ant in designs do
+            printfn "reception: %f" ant.Reception 
+
+    //printf "max: %f" (designs |> List.map (fun a -> a.Reception) |> List.max)
 
     Console.ReadKey() |> ignore
     0
