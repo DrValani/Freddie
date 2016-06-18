@@ -9,32 +9,63 @@ open ProgNet.ClimbHill
 open ProgNet.Landscape
 
 let elevationMap = getElevationMap()
-let getNewAltitude point = elevationMap point.X point.Y 
-let length = Landscape.length / 2.
+let getElevation point = elevationMap point.X point.Y 
+let length = 2813.5
 let startPoint = 
     { X = 0.5 * length 
       Y = 0.5 * length }
 let initialState = 
     { Point = startPoint
       Step = length 
-      Elevation = getNewAltitude startPoint }
+      Elevation = getElevation startPoint }
 
 let ``Freddie will locate 4 point around his location`` () : unit =
     let expectedNeighboursCount = 4
-
     let neighboursFound = neighbours initialState |> List.length
 
-    assertFirstEqualToSecond 4 neighboursFound
+    assertFirstEqualToSecond 4 neighboursFound "See Task (a) line 49 of ClimbHill.fs"
 
 
-let ``Should return an elevation with a higher altitude`` () =
-    let neighboursFound = neighbours initialState
+let ``Calling newState will return an elevation of 2483.803862 (metres)`` () =
+    let newState = newState initialState getElevation startPoint
+    let expected = 4657570185768242473L
+    let actual = System.BitConverter.DoubleToInt64Bits newState.Elevation
 
-    printfn "%A" <| getNewAltitude initialState.Point
+    assertFirstEqualToSecond expected actual "See Task (b) line 58 of ClimbHill.fs"
 
-    let higherPoint = neighboursFound |> Seq.map getNewAltitude |> Seq.max
+let ``The best candidate position should elevate Freddy to 2847.257974 (metres)`` () =
+    let expected = 4658479601574055630L
+    let bestCandidate = bestCandidate initialState getElevation
+    let bestElevation = System.BitConverter.DoubleToInt64Bits <| bestCandidate.Elevation
+    
+    assertFirstEqualToSecond expected bestElevation "See Tasks (c), (d) line 67 of ClimbHill.fs"
 
-    assertFirstEqualToSecond (float 2636.410473) (float higherPoint)
+let ``Calling findHigherPoint should elevate Freddy to 2847.257974 (metres)`` () =
+    let expected = 4658479601574055630L
+    let bestCandidate = findHigherPoint initialState getElevation
+    let bestElevation = System.BitConverter.DoubleToInt64Bits <| bestCandidate.Elevation
+    
+    assertFirstEqualToSecond expected bestElevation "See Task (e) line 79 of ClimbHill.fs"
 
-//``Freddie will locate 4 point around his location`` () 
-``Should return an elevation with a higher altitude`` ()
+let ``The mission is complete when Freddies next move would be smaller than the minStep`` () =
+    let missionIsCompleted = missionComplete 50.0 { initialState with Step = 49.9 }
+    
+    isTrue missionIsCompleted "Mission incomplete: See Task (e) line 79 of ClimbHill.fs"
+
+let ``After climbing as high as possible Freddie should be elevated to a point over 3700 (metres)`` () =
+    let finalPoint = 
+      climb initialState.Point Landscape.length getElevation
+      |> Seq.maxBy (fun s -> s.Elevation)
+
+    assertFirstGreaterThanSecond finalPoint.Elevation 3700.0
+     
+let runTests() =
+    [ "Freddie will locate 4 point around his location", ``Freddie will locate 4 point around his location``
+      "The best candidate position should elevate Freddy to 2847.257974 (metres)", ``The best candidate position should elevate Freddy to 2847.257974 (metres)``
+      "Calling newState will return an elevation of 2483.803862 (metres)", ``Calling newState will return an elevation of 2483.803862 (metres)``
+      "Calling findHigherPoint should elevate Freddy to 2847.257974 (metres)", ``Calling findHigherPoint should elevate Freddy to 2847.257974 (metres)``
+      "The mission is complete when Freddies next move would be smaller than the minStep", ``The mission is complete when Freddies next move would be smaller than the minStep``
+      "After climbing as high as possible Freddie should be elevated to a point over 3700 (metres)", ``After climbing as high as possible Freddie should be elevated to a point over 3700 (metres)``
+    ]
+    |> Seq.iter ( fun (n,f) -> printfn "Running test: %s" n; f ())
+    

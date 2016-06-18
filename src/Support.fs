@@ -4,13 +4,15 @@ open NUnit.Framework
 
 let __YOUR_IMPLEMENTION_HERE__<'T> : 'T = raise <| new System.NotImplementedException("You must implement this to continue") 
 
-let isTrue check =
+let isTrue check msg =
     if check
     then printfn "Test passed."
-    else failwith "Test failed! check is not true"
+    else failwith (sprintf "Test failed! %s" msg)
 
-let assertFirstEqualToSecond x y = 
-    if x = y then printfn "Test passed." else failwith (sprintf "Test failed! %A is not equal to %A" x y)
+let assertFirstEqualToSecond x y msg = 
+    if x = y
+    then printfn "Test passed."
+    else failwith (sprintf "Test failed! %A is not equal to %A: %s" x y msg)
      
 let assertFirstGreaterThanSecond x y = 
     if not (x > y)
