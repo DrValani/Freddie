@@ -54,7 +54,6 @@
     <Compile Include="ClimbHill.fs" />
     <Compile Include="ClimbHillTests.fsx" />
     <Compile Include="Program.fs" />
-    <None Include="TestRunner.fsx" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

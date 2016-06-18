@@ -1,4 +1,6 @@
-﻿#load "Support.fs"
+﻿// Simply highlight and pass to FSI (alt+enter or ctrl+enter) then type runTests();; in the FSI window
+
+#load "Support.fs"
 #load "Surface.fs"
 #load "Landscape.fs"
 #load "ClimbHill.fs"
