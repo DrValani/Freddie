@@ -10,20 +10,20 @@ type Design =
 
 let reception parts = Reception.test parts
 
-let generateList getMember length =
-    length
-    |>  List.unfold (fun length ->
-            if length = 0 then None
-            else Some (getMember (), length - 1))
+//let generateList getMember length =
+//    length
+//    |>  List.unfold (fun length ->
+//            if length = 0 then None
+//            else Some (getMember (), length - 1))
 
 let createDesign () = 
     let partCount = 128
-    let randomPart () = Parts.[random.Next(Parts.Length)]
-    let parts = generateList randomPart partCount
+    let randomPart _ = Parts.[random.Next(Parts.Length)]
+    let parts = List.init partCount randomPart
     { Parts = parts; Reception = reception parts }
 
-let createDesigns = 
-    generateList createDesign 
+let createDesigns designCount = 
+    List.init designCount (fun _ -> createDesign () )
        
 let missionComplete designs =
     let targetReception = 80.0

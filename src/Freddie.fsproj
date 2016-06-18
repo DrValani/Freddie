@@ -51,12 +51,14 @@
     <Compile Include="Landscape.fs" />
     <Compile Include="Fuel.fs" />
     <Compile Include="Reception.fs" />
+    <Compile Include="TransmissionLog.fs" />
     <Compile Include="AssemblyInfo.fs" />
     <None Include="App.config" />
     <Compile Include="Common.fs" />
     <Compile Include="ClimbHill.fs" />
     <Compile Include="EstimateLife.fs" />
     <Compile Include="Antenna.fs" />
+    <Compile Include="Wake.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <PropertyGroup>

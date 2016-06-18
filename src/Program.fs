@@ -21,8 +21,8 @@ let climbMap () =
            (state.Height.ToString("n0")) x y state.Step 
 
     climbMap ()
-    //|> Seq.iter printState
-    |> Seq.last |> printState
+    |> Seq.iter printState
+    //|> Seq.last |> printState
 
 let getRemainingTime currentTime =
     printTitle "Estimating Battery Life"
@@ -49,13 +49,17 @@ let designAntenna () =
 //    results |> List.head |> List.head |> display 
 //    results |> List.last |> List.head |> display 
     
+let wake () =
+    printTitle "Wake"
+    TransmissionLog.Entries
+    |> List.iter (printfn "%A")
 
 [<EntryPoint>]
 let main argv = 
     climbMap ()
     getRemainingTime 60.0
     designAntenna ()
-        
+    wake ()
 
 
     Console.ReadKey() |> ignore
