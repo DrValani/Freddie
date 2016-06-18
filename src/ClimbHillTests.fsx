@@ -1,5 +1,4 @@
-﻿#r "packages/NUnit.2.6.4/lib/nunit.framework.dll"
-#load "Support.fs"
+﻿#load "Support.fs"
 #load "Surface.fs"
 #load "Landscape.fs"
 #load "ClimbHill.fs"

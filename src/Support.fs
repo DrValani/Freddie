@@ -1,6 +1,5 @@
 ﻿[<AutoOpen>]
 module ProgNet.Support
-open NUnit.Framework
 
 let __YOUR_IMPLEMENTION_HERE__<'T> : 'T = raise <| new System.NotImplementedException("You must implement this to continue") 
 
