@@ -22,3 +22,10 @@ let assertFirstLessThanSecond x y =
     if not (x < y) 
     then failwith (sprintf "Test failed! %A is not less than %A" x y)
     else printfn "Test passed."
+
+let pointsAreSame (x:float) y msg =
+    let diff = abs (x - y)
+
+    if diff < 0.00001
+    then printfn "Test passed."
+    else failwith  (sprintf "Test failed! %A is equivalent %A: %A" x y msg)
