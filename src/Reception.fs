@@ -24,13 +24,27 @@ let test design =
         ((dimensionSym hEnd)**2.0 * (dimensionSym vEnd)**2.0) ** 3.0
 
     let spread =
-        let hMin, hMax, vMin, vMax =
+        let getLimits points =
             ((0, 0, 0, 0), points)
             ||> List.fold (fun (hMin, hMax, vMin, vMax) (h, v) ->              
                 (min hMin h, max hMax h, min vMin v, max vMax v))                
-        let spread = (hMax - hMin) * (vMax - vMin) |> float
+
         let maxSpread = ((design |> List.length |> float) / 4.0) ** 2.0
-        min 1.0 (spread / maxSpread)    
+        
+        let calcSpread points =
+            let hMin, hMax, vMin, vMax =
+                ((0, 0, 0, 0), points)
+                ||> List.fold (fun (hMin, hMax, vMin, vMax) (h, v) ->              
+                    (min hMin h, max hMax h, min vMin v, max vMax v))                
+            let spread = (hMax - hMin) * (vMax - vMin) |> float
+            min 1.0 (spread / maxSpread)              
+
+        let alignedSpread = points |> calcSpread 
+        let diagonalSpread = 
+            points 
+            |> List.map (fun (x, y) -> (x + y), (x - y))
+            |> calcSpread 
+        (alignedSpread + diagonalSpread) / 2.0
 
     100.0 * symmetry * spread
 

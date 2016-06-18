@@ -26,7 +26,7 @@ let createDesigns =
     generateList createDesign 
        
 let missionComplete designs =
-    let targetReception = 90.0
+    let targetReception = 80.0
     match designs with
     | first::_ -> first.Reception > targetReception
     | _ -> failwith "Well, this shouldn't happen"
@@ -71,9 +71,12 @@ let evolve designs =
         |> List.ofSeq
 
     let survivors = cull designs
-    let replacements = createCrossovers designs (designCount - (survivors.Length))
+    let replacementCount = designCount - survivors.Length
+    let crossoverCount = (9 * replacementCount) / 10
+    let crossovers = createCrossovers designs crossoverCount
+    let newDesigns = createDesigns (replacementCount - crossoverCount)
            
-    [survivors; replacements]
+    [survivors; crossovers; newDesigns]
     |> Seq.concat
     |> Seq.sortBy (fun design -> -1.0 * design.Reception)
     |> List.ofSeq
