@@ -47,11 +47,15 @@ let designAntenna () =
         printfn "%A" (design.Parts |> Array.ofList |> String)
 //        for (x, y) in Reception.toPoints design.Parts do
 //            printfn "%d\t%d" x y
-    
+               
     Antenna.design ()
-    |> Seq.map List.head
-    |> Seq.iter display
-    //|> Seq.last |> display
+    |> Seq.map Seq.head
+    //|> Seq.iter display
+    |> Seq.last |> display
+    
+//    let results = Antenna.design () |> List.ofSeq
+//    results |> List.head |> List.head |> display 
+//    results |> List.last |> List.head |> display 
     
 
 [<EntryPoint>]
