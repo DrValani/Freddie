@@ -10,8 +10,8 @@ type State =
   { Point : Point
     Step : float 
     Height: float }
-  
-let findHigherPoint current getElevation =
+ 
+let findHigherPoint getElevation current =
     let stepFactor = 0.8333
 
     let neighbours = 
@@ -42,16 +42,25 @@ let missionComplete minStep state =
 
 let climb startPoint initialStep getHeight  =
     let initialState = 
-       { Point = startPoint
-         Step = initialStep 
-         Height = getHeight startPoint }
+      { Point = startPoint
+        Step = initialStep
+        Height = getHeight startPoint }
+
+    Common.improveIncrementally
+        initialState
+        (findHigherPoint getHeight)
+        (missionComplete (initialStep / 10000.0))
+
+let climbMap () =    
+    let mapLength = Landscape.length
+ 
+    let getMapHeight =     
+        let elevationMap = Landscape.getElevationMap ()
+        (fun point -> elevationMap point.X point.Y)             
+
+    let startPoint = 
+        { X = 0.5 * mapLength 
+          Y = 0.5 * mapLength }
     
-    let minimumStep = initialStep / 10000.0
-
-    let rec climbUntilDone state = seq {
-        yield state
-        if not (missionComplete minimumStep state) then
-            let improved = findHigherPoint state getHeight
-            yield! climbUntilDone improved }
-
-    climbUntilDone initialState
+    climb startPoint mapLength getMapHeight
+    

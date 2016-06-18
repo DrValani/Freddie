@@ -53,6 +53,7 @@
     <Compile Include="Reception.fs" />
     <Compile Include="AssemblyInfo.fs" />
     <None Include="App.config" />
+    <Compile Include="Common.fs" />
     <Compile Include="ClimbHill.fs" />
     <Compile Include="EstimateLife.fs" />
     <Compile Include="Antenna.fs" />

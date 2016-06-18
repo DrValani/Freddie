@@ -82,13 +82,9 @@ let evolve designs =
     |> List.ofSeq
 
 let design () = 
-    let initialDesigns = createDesigns 1000
-    
-    let rec evolveUntilDone designs = seq {
-        yield designs
-        if not (missionComplete designs) then
-            let evolved = evolve designs
-            yield! evolveUntilDone evolved }
-
-    createDesigns 1000 |> evolveUntilDone 
+    Common.improveIncrementally 
+        (createDesigns 1000)
+        evolve 
+        missionComplete   
+     
     

@@ -12,23 +12,15 @@ let printTitle title =
     printfn ""
     
 
-let climbHill () = 
-    printTitle "Finding High Point"
+let climbMap () = 
+    printTitle "Climbing Map"
 
     let printState state =
         let {Point = {X = x; Y = y}} = state
         printfn "%sm (%f, %f) step:%f"
            (state.Height.ToString("n0")) x y state.Step 
 
-    let length = Landscape.length
-    let elevationMap = Landscape.getElevationMap ()
-    let getHeight point = elevationMap point.X point.Y             
-    
-    let startPoint = 
-        { X = 0.5 * length 
-          Y = 0.5 * length }
-
-    climb startPoint length getHeight
+    climbMap ()
     //|> Seq.iter printState
     |> Seq.last |> printState
 
@@ -60,7 +52,7 @@ let designAntenna () =
 
 [<EntryPoint>]
 let main argv = 
-    climbHill ()
+    climbMap ()
     getRemainingTime 60.0
     designAntenna ()
         
