@@ -44,6 +44,9 @@
     <Reference Include="FSharp.Core">
       <Private>True</Private>
     </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Support.fs" />
@@ -54,6 +57,7 @@
     <Compile Include="ClimbHill.fs" />
     <Compile Include="ClimbHillTests.fsx" />
     <Compile Include="Program.fs" />
+    <None Include="packages.config" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

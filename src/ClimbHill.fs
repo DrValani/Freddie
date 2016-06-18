@@ -34,55 +34,59 @@ type State =
     { Point : Point
       Step : float 
       Elevation: float }
+
   
 // 1) The first task Freddie needs to complete is to know 
 // how to discrimate between the various heights of the 
 // surrounding terrain. Freddie needs to do this in order
 // to be able to move to a higher location.
 
+// stepFactor is the factor for which Freddie will
+// gradually reduce to in the search for the 
+// necessary altitude to broadcast the message.
+let stepFactor = 0.8333
+
+let neighbours current = 
+    // a) Get the current point
+    let point = current.Point
+    let step = current.Step
+    [ { point with Y = point.Y - step }
+      { point with X = point.X + step }
+      { point with Y = point.Y + step }
+      { point with X = point.X - step } ]
+
+let newState current getElevation point =
+    { current with
+        Point = point 
+        // b) Get the elevation of the point 
+        Elevation = getElevation point }
+
+// c) In F# we use map, which is similar to Select
+// in Linq, here you need to use map on neighbours
+// and List.map them using the newState function above.
+let bestCandidate current getElevation = 
+    neighbours current
+    |> List.map (newState current getElevation)
+    // d) Look on the List type for a function
+    // that will help you locate the highest
+    // elevation in the data. You will have to
+    // use a lambda in the form similar to:
+    // (fun point -> point.Elevation)
+    |> List.maxBy (fun s -> s.Elevation)
+
 // Here is our first function, we use 'let' to declare a function
 // then the name of the function and followed by the arguments.
 let findHigherPoint current getElevation =
-    // stepFactor is the factor for which Freddie will
-    // gradually reduce to in the search for the 
-    // necessary altitude to broadcast the message.
-    let stepFactor = 0.8333
 
-    let neighbours = 
-        // a) Get the current point
-        let point = current.Point
-        let step = current.Step
-        [ { point with Y = point.Y - step }
-          { point with X = point.X + step }
-          { point with Y = point.Y + step }
-          { point with X = point.X - step } ]
-
-    let newState point =
-        { current with
-            Point = point 
-            // b) Get the elevation of the point 
-            Elevation = getElevation point }
-
-    // c) In F# we use map, which is similar to Select
-    // in Linq, here you need to use map on neighbours
-    // and List.map them using the newState function above.
-    let bestCandidate = 
-        neighbours
-        |> List.map newState
-        // d) Look on the List type for a function
-        // that will help you locate the highest
-        // elevation in the data. You will have to
-        // use a lambda in the form similar to:
-        // (fun point -> point.Elevation)
-        |> List.maxBy (fun s -> s.Elevation)
+    let best = bestCandidate current getElevation
 
     // e) Now you have the bestCandidate you need to
     // compare its elevation to the current elevation.
     // if greater then return that one, otherwise
     // reduce the current step by multiplying it with
     // stepFactor to update the step size.
-    if bestCandidate.Elevation > current.Elevation then
-        bestCandidate
+    if best.Elevation > current.Elevation then
+        best
     else
         { current with Step = current.Step * stepFactor }
 
