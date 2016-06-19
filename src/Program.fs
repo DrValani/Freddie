@@ -9,8 +9,8 @@ let euler x y = Math.E ** -(x ** 2.0 + y ** 2.0)
 
 let printState state =
     let { Point = { X = x; Y = y } } = state
-    printfn "  --->  x:%f, y:%f, step:%f, elevation:%f" 
-        x y state.Step state.Elevation 
+    printfn "%sm (%f, %f) step: %f" 
+        (state.Elevation.ToString("n0")) x y state.Step  
 
 [<EntryPoint>]
 let main argv = 
