@@ -1,8 +1,9 @@
 ﻿open System
 
 open ClimbHill
-open EstimateLife
+open BatteryLife
 open Antenna
+open Wake
 
 let printTitle title =
     printfn ""
@@ -29,21 +30,21 @@ let getRemainingTime currentTime =
     //let start = DateTime(2016, 6, 16, 19, 0, 0)
     let start = DateTime(2016, 6, 23, 9, 0, 0)
     let elapsedMinutes = DateTime.Now.Subtract(start).TotalMinutes
-    let remainingMinutes = EstimateLife.remainingTime Fuel.Readings elapsedMinutes
+    let remainingMinutes = BatteryLife.remainingTime Fuel.Readings elapsedMinutes
     printfn "%s minutes remaining." (remainingMinutes.ToString("n1"))
 
 let designAntenna () =
     printTitle "Designing Antenna"
     let display design = 
-        printfn "%s%%" (design.Reception.ToString("n2"))
-        printfn "%A" (design.Parts |> Array.ofList |> String)
+        printf "%s%% - " (design.Reception.ToString("n2"))
+        printfn "%s" (design.Parts |> Array.ofList |> String)
 //        for (x, y) in Reception.toPoints design.Parts do
 //            printfn "%d\t%d" x y
                
     Antenna.design ()
     |> Seq.map Seq.head
-    //|> Seq.iter display
-    |> Seq.last |> display
+    |> Seq.iter display
+    //|> Seq.last |> display
     
 //    let results = Antenna.design () |> List.ofSeq
 //    results |> List.head |> List.head |> display 
@@ -51,14 +52,32 @@ let designAntenna () =
     
 let wake () =
     printTitle "Wake"
-    TransmissionLog.Entries
-    |> List.iter (printfn "%A")
+//    TransmissionLog.entriesAsRecords
+//    |> List.iter (printfn "%A")
+
+    let x = TransmissionLog.entriesAsLists
+
+    let trainingData =
+        TransmissionLog.entriesAsLists
+        |> List.map (fun (reception :: inputs) ->
+            { Inputs = inputs
+              Desired = if reception > 0.5 then 1.0 else -1.0 } )
+
+    let display perceptron =          
+        let success, count = successStats trainingData perceptron
+        printfn "%d/%d - Bias:%f  Weigths:%A" success count perceptron.BiasWeight perceptron.InputWeights
+                    
+    Wake.trainPerceptron trainingData
+    |> Seq.iter display
+    //|> Seq.last |> display
+        
+
 
 [<EntryPoint>]
 let main argv = 
-    climbMap ()
-    getRemainingTime 60.0
-    designAntenna ()
+//    climbMap ()
+//    getRemainingTime 60.0
+//    designAntenna ()
     wake ()
 
 

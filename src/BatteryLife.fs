@@ -1,4 +1,4 @@
-﻿module EstimateLife
+﻿module BatteryLife
 
 open Fuel
 open ClimbHill

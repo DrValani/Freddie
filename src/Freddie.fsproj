@@ -56,7 +56,7 @@
     <None Include="App.config" />
     <Compile Include="Common.fs" />
     <Compile Include="ClimbHill.fs" />
-    <Compile Include="EstimateLife.fs" />
+    <Compile Include="BatteryLife.fs" />
     <Compile Include="Antenna.fs" />
     <Compile Include="Wake.fs" />
     <Compile Include="Program.fs" />

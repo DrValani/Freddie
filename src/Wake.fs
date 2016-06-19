@@ -1,23 +1,72 @@
 ﻿module Wake
 
 type Perceptron =
-    { Weights : float list
-      Bias : float }
+    { InputWeights : float list
+      BiasWeight : float }
+
+type TrainingEntry = 
+    { Inputs : float list
+      Desired : float}
+
+let bias = 1.0
 
 let evaluate perceptron inputs =
     let weightedInput = 
-        (perceptron.Weights, inputs)
-        ||> Seq.map2 (*)
-        |> Seq.sum
-    if weightedInput > perceptron.Bias then
-        1.0
-    else
-        0.0
+        Seq.fold2
+            (fun sum weight input -> sum + weight * input)
+            0.0
+            perceptron.InputWeights
+            inputs
+    if weightedInput + (perceptron.BiasWeight * bias) > 0.0 
+    then 1.0 else -1.0
 
 let createPerceptron inputCount =
-    { Weights = List.init inputCount (fun _ -> 0.0)
-      Bias = 0.0 }
+    { InputWeights = List.init inputCount (fun _ -> 0.0)
+      BiasWeight = 0.0 }
 
-let trainPerceptron trainingData perceptron =
-    perceptron
+let trainWithEntry learningRate perceptron trainingEntry =    
+    let guess = evaluate perceptron trainingEntry.Inputs
+    let error = trainingEntry.Desired - guess
 
+    let updateWeight weight input = 
+        weight + input * error * learningRate
+
+    let newInputWeights =
+        List.map2
+            updateWeight
+            perceptron.InputWeights   
+            trainingEntry.Inputs
+    let newBiasWeight = 
+        updateWeight perceptron.BiasWeight bias
+    //printfn "bias:%f  - Weight:%f" newBiasWeight (newInputWeights.Head)
+    { InputWeights = newInputWeights
+      BiasWeight = newBiasWeight } 
+
+let trainWithSeries learningRate trainingData perceptron =
+    List.fold
+        (trainWithEntry learningRate)
+        perceptron
+        trainingData
+
+let successStats trainingData perceptron =
+    let successCount =
+        trainingData
+        |> List.filter (fun entry -> 
+            entry.Desired = evaluate perceptron entry.Inputs )
+        |> List.length
+    (successCount, trainingData.Length)
+    
+let doneTraining trainingData perceptron =
+    let successCount, count = successStats trainingData perceptron
+    successCount = count
+
+let trainPerceptron trainingData =
+    let learningRate = 0.1
+    let sample = List.head trainingData
+    let guess = createPerceptron sample.Inputs.Length
+
+    Common.improveIncrementally 
+        guess 
+        (trainWithSeries learningRate trainingData)
+        (doneTraining trainingData)
+    
