@@ -54,7 +54,7 @@ let designAntenna () =
 //    results |> List.last |> List.head |> display 
     
 let wake () =
-    printTitle "Wake"
+    printTitle "Control Antenna"
 //    TransmissionLog.entriesAsRecords
 //    |> List.iter (printfn "%A")
 
@@ -80,18 +80,18 @@ let learnMartian () =
         let printStats title {Total = total; Correct = correct; Percent = percent } =
             Console.WriteLine("{0}: {1:n2}% correct ({2:n0}/{3:n0})", 
                 title, percent, correct, total)
+        trainingSet.TrainingStats |> printStats "    Training"
+        trainingSet.TestStats |> printStats "        Test"
         printfn ""
-        trainingSet.TrainingStats |> printStats "Training"
-        trainingSet.TestStats |> printStats "    Test"
         
 
     let sampleCount = 2000        // number of samples to use (max 21,000)
-    let learnRate = 0.1           // learns faster but reduces final accuracy (e.g.: 0.001 - 0.1)
+    let learnRate = 0.05          // learns faster but reduces final accuracy (e.g.: 0.001 - 0.1)
     let requiredAccuracy =  70.0  // when to stop
 
     MartianSymbols.learn  sampleCount learnRate requiredAccuracy
         |> Seq.iter display    
-    printfn "All Done!"
+
 
 
 [<EntryPoint>]
@@ -102,5 +102,7 @@ let main argv =
     wake ()
     learnMartian ()
 
+    printfn ""
+    printfn "Done."
     Console.ReadKey() |> ignore
     0

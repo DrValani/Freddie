@@ -46,8 +46,10 @@ let learn trainingCount learnRate requiredAccuracy =
     printfn " done. "         
 
     let improve samples net = 
+        printfn "Training..."
         shuffleInPlace samples
         trainAllSamples samples net
+        printfn "Evaluating..."
         net |> calcStats 
 
     let doneTraining trainingInfo = trainingInfo.TestStats.Percent > requiredAccuracy
