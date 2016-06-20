@@ -28,10 +28,9 @@ let climbMap () =
     |> Seq.iter printState
     //|> Seq.last |> printState
 
-let getRemainingTime currentTime =
+let getBatteryLife currentTime =
     printTitle "Estimating Battery Life"
-    //let start = DateTime(2016, 6, 16, 19, 0, 0)
-    let start = DateTime(2016, 6, 23, 9, 0, 0)
+    let start = DateTime(2016, 6, 1, 0, 0, 0)
     let elapsedMinutes = DateTime.Now.Subtract(start).TotalMinutes
     let remainingMinutes = BatteryLife.remainingTime Fuel.Readings elapsedMinutes
     printfn "%s minutes remaining." (remainingMinutes.ToString("n1"))
@@ -49,10 +48,7 @@ let designAntenna () =
     |> Seq.iter display
     //|> Seq.last |> display
     
-//    let results = Antenna.design () |> List.ofSeq
-//    results |> List.head |> List.head |> display 
-//    results |> List.last |> List.head |> display 
-    
+
 let wake () =
     printTitle "Control Antenna"
 //    TransmissionLog.entriesAsRecords
@@ -96,11 +92,11 @@ let learnMartian () =
 
 [<EntryPoint>]
 let main argv = 
-    climbMap ()
-    getRemainingTime 60.0
-    designAntenna ()
-    wake ()
-    learnMartian ()
+//    climbMap ()
+    getBatteryLife 60.0
+//    designAntenna ()
+//    wake ()
+//    learnMartian ()
 
     printfn ""
     printfn "Done."
