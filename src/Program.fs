@@ -5,6 +5,9 @@ open BatteryLife
 open Antenna
 open Wake
 
+open NNetTrainer
+open MartianSymbols
+
 let printTitle title =
     printfn ""
     printfn ""
@@ -71,15 +74,33 @@ let wake () =
     |> Seq.iter display
     //|> Seq.last |> display
         
+let learnMartian () =
+    printTitle "Learning Martian"
+    let display trainingSet =
+        let printStats title {Total = total; Correct = correct; Percent = percent } =
+            Console.WriteLine("{0}: {1:n2}% correct ({2:n0}/{3:n0})", 
+                title, percent, correct, total)
+        printfn ""
+        trainingSet.TrainingStats |> printStats "Training"
+        trainingSet.TestStats |> printStats "    Test"
+        
+
+    let sampleCount = 2000        // number of samples to use (max 21,000)
+    let learnRate = 0.1           // learns faster but reduces final accuracy (e.g.: 0.001 - 0.1)
+    let requiredAccuracy =  70.0  // when to stop
+
+    MartianSymbols.learn  sampleCount learnRate requiredAccuracy
+        |> Seq.iter display    
+    printfn "All Done!"
 
 
 [<EntryPoint>]
 let main argv = 
-//    climbMap ()
-//    getRemainingTime 60.0
-//    designAntenna ()
+    climbMap ()
+    getRemainingTime 60.0
+    designAntenna ()
     wake ()
-
+    learnMartian ()
 
     Console.ReadKey() |> ignore
     0

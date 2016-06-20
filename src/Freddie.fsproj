@@ -52,6 +52,10 @@
     <Compile Include="Fuel.fs" />
     <Compile Include="Reception.fs" />
     <Compile Include="TransmissionLog.fs" />
+    <Compile Include="NNetSamples.fs" />
+    <Compile Include="NNetParts.fs" />
+    <Compile Include="NNet.fs" />
+    <Compile Include="NNetTrainer.fs" />
     <Compile Include="AssemblyInfo.fs" />
     <None Include="App.config" />
     <Compile Include="Common.fs" />
@@ -59,6 +63,7 @@
     <Compile Include="BatteryLife.fs" />
     <Compile Include="Antenna.fs" />
     <Compile Include="Wake.fs" />
+    <Compile Include="MartianSymbols.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <PropertyGroup>
