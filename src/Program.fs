@@ -18,7 +18,7 @@ let printTitle title =
     
 
 let climbMap () = 
-    printTitle "Climbing Map"
+    printTitle "Climbing Hill"
 
     let printState state =
         let {Point = {X = x; Y = y}} = state

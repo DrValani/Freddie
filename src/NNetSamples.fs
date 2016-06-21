@@ -37,7 +37,7 @@ let loadSymbols maxSamples =
             fields.[1..] |> Array.map float 
         { Input = inputs; Target = target}
 
-    readSamplesFile "Symbols.csv"
+    readSamplesFile "martian-digits.csv"
     |> Seq.skip 1
     |> Seq.take maxSamples
     |> Seq.map sampleFromLine
