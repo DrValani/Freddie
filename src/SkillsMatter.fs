@@ -96,7 +96,7 @@ let learnMartian () =
         printfn ""
         
 
-    let sampleCount = 2000        // number of samples to use (max 21,000)
+    let sampleCount = 20000        // number of samples to use (max 21,000)
     let learnRate = 0.05          // learns faster but reduces final accuracy (e.g.: 0.001 - 0.1)
     let requiredAccuracy =  70.0  // when to stop
 
