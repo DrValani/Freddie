@@ -1,4 +1,6 @@
-﻿module Wake
+﻿module RepairGates
+
+open System
 
 type Perceptron =
     { InputWeights : float list
@@ -8,12 +10,11 @@ type TrainingEntry =
     { Inputs : float list
       Desired : float}
 
-let bias = 1.0stats.stackexchange.com/questions/143996/what-is-the-difference-between-linear-perceptron-regression-and-ls-linear-regres
+let bias = 1.0
 
 let activate total =
     if total > 0.0 
     then 1.0 else -1.0
-
 
 let evaluate perceptron inputs =
     let weightedInput = 
@@ -26,7 +27,11 @@ let evaluate perceptron inputs =
     activate total
 
 let createPerceptron inputCount =
-    { InputWeights = List.init inputCount (fun _ -> 0.0)
+    let rndWeight = 
+        let random = Random()
+        (fun _ -> random.NextDouble() * 2.0 - 1.0)
+    let zeroWeight _ =  0.0
+    { InputWeights = List.init inputCount zeroWeight
       BiasWeight = 0.0 }
 
 let trainWithEntry learningRate perceptron trainingEntry =    
@@ -43,16 +48,15 @@ let trainWithEntry learningRate perceptron trainingEntry =
             trainingEntry.Inputs
     let newBiasWeight = 
         updateWeight perceptron.BiasWeight bias
-    //printfn "bias:%f  - Weight:%f" newBiasWeight (newInputWeights.Head)
     { InputWeights = newInputWeights
       BiasWeight = newBiasWeight } 
 
 let trainWithSeries learningRate trainingData perceptron =
-    List.fold
+    trainingData
+    |> List.fold
         (trainWithEntry learningRate)
         perceptron
-        trainingData
-
+        
 let successStats trainingData perceptron =
     let successCount =
         trainingData
@@ -68,10 +72,13 @@ let doneTraining trainingData perceptron =
 let trainPerceptron trainingData =
     let learningRate = 0.1
     let sample = List.head trainingData
+    
     let guess = createPerceptron sample.Inputs.Length
+    let improve = trainWithSeries learningRate trainingData
+    let isGoodEnough = doneTraining trainingData
 
     Common.improveIncrementally 
         guess 
-        (trainWithSeries learningRate trainingData)
-        (doneTraining trainingData)
+        improve
+        isGoodEnough
     

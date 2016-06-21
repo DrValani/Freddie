@@ -3,7 +3,8 @@
 open ClimbHill
 open BatteryLife
 open Antenna
-open Wake
+open GateData
+open RepairGates
 
 open NNetTrainer
 open MartianSymbols
@@ -50,26 +51,35 @@ let designAntenna () =
     
 
 let wake () =
-    printTitle "Control Antenna"
-//    TransmissionLog.entriesAsRecords
-//    |> List.iter (printfn "%A")
+    printTitle "Replace Gates"
 
-    let x = TransmissionLog.entriesAsLists
+    let emulateGate gateName gateCases =        
+    
+        printfn "Training '%s' Gate." gateName
+    
+        let trainingData  =
+            let b2f bool = if bool then 1.0 else -1.0
+            gateCases
+            |> List.map(fun case -> 
+              { Inputs =  [b2f case.A; b2f case.B ]
+                Desired = b2f case.Output })
 
-    let trainingData =
-        TransmissionLog.entriesAsLists
-        |> List.map (fun (reception :: inputs) ->
-            { Inputs = inputs
-              Desired = if reception > 0.5 then 1.0 else -1.0 } )
+        let display perceptron  =          
+            let success, count = successStats trainingData perceptron
+            printfn "%d/%d - Bias:%f  Weigths:%A" success count perceptron.BiasWeight perceptron.InputWeights
 
-    let display perceptron =          
-        let success, count = successStats trainingData perceptron
-        printfn "%d/%d - Bias:%f  Weigths:%A" success count perceptron.BiasWeight perceptron.InputWeights
-                    
-    Wake.trainPerceptron trainingData
-    |> Seq.iter display
-    //|> Seq.last |> display
-        
+        trainPerceptron trainingData
+        |> Seq.iter display
+        //|> Seq.last |> display
+
+        printfn ""
+    
+    emulateGate "Or" GateData.orCases
+    emulateGate "And" GateData.andCases
+    emulateGate "Nand" GateData.nandCases
+    //emulateGate "Xor" GateData.xorCases
+
+       
 let learnMartian () =
     printTitle "Learning Martian"
     let display trainingSet =
@@ -92,11 +102,11 @@ let learnMartian () =
 
 [<EntryPoint>]
 let main argv = 
-//    climbMap ()
-//    getBatteryLife 60.0
-//    designAntenna ()
+    climbMap ()
+    getBatteryLife 60.0
+    designAntenna ()
     wake ()
-//    learnMartian ()
+    learnMartian ()
 
     printfn ""
     printfn "Done."

@@ -51,7 +51,7 @@
     <Compile Include="Landscape.fs" />
     <Compile Include="Fuel.fs" />
     <Compile Include="Reception.fs" />
-    <Compile Include="TransmissionLog.fs" />
+    <Compile Include="GateData.fs" />
     <Compile Include="NNetSamples.fs" />
     <Compile Include="NNetParts.fs" />
     <Compile Include="NNet.fs" />
@@ -62,7 +62,7 @@
     <Compile Include="ClimbHill.fs" />
     <Compile Include="BatteryLife.fs" />
     <Compile Include="Antenna.fs" />
-    <Compile Include="Wake.fs" />
+    <Compile Include="RepairGates.fs" />
     <Compile Include="MartianSymbols.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
