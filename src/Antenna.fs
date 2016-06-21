@@ -35,15 +35,7 @@ let missionComplete designs =
 let evolve designs =
     let designCount = List.length designs
 
-    let shuffle list =
-        let array = Array.ofList list
-        let len = Array.length array
-        for i in [0 .. (len - 1)] do
-            let j = random.Next(len)
-            let jItem = array.[j]
-            array.[j] <- array.[i]
-            array.[i] <- jItem    
-        List.ofArray array
+    let shuffle = List.sortBy (fun _ -> random.Next())
    
     let selectPairs designs =
         List.zip designs (shuffle designs)
