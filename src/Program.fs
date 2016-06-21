@@ -93,9 +93,9 @@ let learnMartian () =
 [<EntryPoint>]
 let main argv = 
 //    climbMap ()
-    getBatteryLife 60.0
+//    getBatteryLife 60.0
 //    designAntenna ()
-//    wake ()
+    wake ()
 //    learnMartian ()
 
     printfn ""

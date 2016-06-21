@@ -8,7 +8,12 @@ type TrainingEntry =
     { Inputs : float list
       Desired : float}
 
-let bias = 1.0
+let bias = 1.0stats.stackexchange.com/questions/143996/what-is-the-difference-between-linear-perceptron-regression-and-ls-linear-regres
+
+let activate total =
+    if total > 0.0 
+    then 1.0 else -1.0
+
 
 let evaluate perceptron inputs =
     let weightedInput = 
@@ -17,8 +22,8 @@ let evaluate perceptron inputs =
             0.0
             perceptron.InputWeights
             inputs
-    if weightedInput + (perceptron.BiasWeight * bias) > 0.0 
-    then 1.0 else -1.0
+    let total = weightedInput + (perceptron.BiasWeight * bias)
+    activate total
 
 let createPerceptron inputCount =
     { InputWeights = List.init inputCount (fun _ -> 0.0)
