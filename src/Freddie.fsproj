@@ -64,7 +64,7 @@
     <Compile Include="Antenna.fs" />
     <Compile Include="RepairGates.fs" />
     <Compile Include="MartianSymbols.fs" />
-    <Compile Include="Program.fs" />
+    <Compile Include="SkillsMatter.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

@@ -29,12 +29,17 @@ let climbMap () =
     |> Seq.iter printState
     //|> Seq.last |> printState
 
-let getBatteryLife currentTime =
+let getBatteryLife () =
     printTitle "Estimating Battery Life"
-    let start = DateTime(2016, 6, 1, 0, 0, 0)
-    let elapsedMinutes = DateTime.Now.Subtract(start).TotalMinutes
-    let remainingMinutes = BatteryLife.remainingTime Fuel.Readings elapsedMinutes
+
+    let bestLine = BatteryLife.findBestLine Fuel.Readings
+
+    let totalMinutes = bestLine.InitialFuel /  (- bestLine.Slope)
+    let missionStart = DateTime(2016, 6, 1, 0, 0, 0)
+    let elapsedMinutes = DateTime.Now.Subtract(missionStart).TotalMinutes
+    let remainingMinutes = totalMinutes - elapsedMinutes
     printfn "%s minutes remaining." (remainingMinutes.ToString("n1"))
+    
 
 let designAntenna () =
     printTitle "Designing Antenna"
@@ -50,7 +55,7 @@ let designAntenna () =
     //|> Seq.last |> display
     
 
-let wake () =
+let repairGates () =
     printTitle "Replace Gates"
 
     let emulateGate gateName gateCases =        
@@ -103,9 +108,9 @@ let learnMartian () =
 [<EntryPoint>]
 let main argv = 
     climbMap ()
-    getBatteryLife 60.0
+    getBatteryLife ()
     designAntenna ()
-    wake ()
+    repairGates ()
     learnMartian ()
 
     printfn ""

@@ -33,10 +33,10 @@ let findBestLine readings =
     { InitialFuel = pointOfLeastDistance.X
       Slope = pointOfLeastDistance.Y }
     
-let remainingTime readings currentTime =
-    let line = findBestLine Fuel.Readings
-    let totalTime = line.InitialFuel /  (- line.Slope)
-    totalTime - currentTime
+//let remainingTime readings currentTime =
+//    let line = findBestLine Fuel.Readings
+//    let totalTime = line.InitialFuel /  (- line.Slope)
+//    totalTime - currentTime
 
             
         
