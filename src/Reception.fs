@@ -33,9 +33,7 @@ let test design =
         
         let calcSpread points =
             let hMin, hMax, vMin, vMax =
-                ((0, 0, 0, 0), points)
-                ||> List.fold (fun (hMin, hMax, vMin, vMax) (h, v) ->              
-                    (min hMin h, max hMax h, min vMin v, max vMax v))                
+                points |> getLimits               
             let spread = (hMax - hMin) * (vMax - vMin) |> float
             min 1.0 (spread / maxSpread)              
 
