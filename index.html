@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Freddie's Martian Adventures</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link href="./cover.css" rel="stylesheet">
+    <link href="./custom.css" rel="stylesheet">
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="site-wrapper">
+
+      <div class="site-wrapper-inner">
+
+        <div class="cover-container">
+
+          <div class="inner cover">
+            <h1 class="cover-heading">Plot your trek</h1>
+            <canvas id="sketch"></canvas>
+            <p class="lead">Paste the output of your pathfinding in the textarea below to see your robot's journey! The map may be rotated compared to what you expect. The expected format are separate x,y coordinate pairs per line wrapped in parentheses. These may be surrounded by other text. For example: <br /><tt>pos=(123.345, 7986.909) height=5094.645</tt><br />or<br /><tt>3,820m (5252.494098, 1747.964328) step: 4.756804</tt><br /> Would be valid input formats.</p>
+            <form>
+              <textarea id="inputbox" name="textarea" ></textarea>
+            </form>
+          </div>
+
+          <div class="mastfoot">
+            <div class="inner">
+              <p>Created by <a href="https://twitter.com/jhndon">@jhndon</a>, <a href="https://twitter.com/MarkRGray">@MarkRGray</a> and <a href="https://twitter.com/fractallambda">@fractallambda</a>.</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.13.1/lodash.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+		<script src="../processing.min.js"></script>
+		<script src="./hill.js"></script>
+  </body>
+</html>

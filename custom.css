@@ -1,0 +1,15 @@
+#sketch{
+  width:100%;
+  margin: 40px 0px 40px 0px;
+  border: 1px solid white;
+}
+#inputbox{
+  width:100%;
+  height:5em;
+  color:black;
+}
+
+tt{
+  font-weight:bold;
+  color:rgb(30,200,200)
+}
